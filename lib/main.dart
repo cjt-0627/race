@@ -288,7 +288,7 @@ class RedCar extends SpriteComponent with CollisionCallbacks {
     v += a * dt;
     position += Vector2(v * cos(dir), v * -sin(dir)) * dt;
     if (v != 0) {
-      dir += v * dt * -turn / size.y * pi / 8;
+      dir += v * dt * -turn / size.y * pi / 4;
       angle = -dir+pi/2;
     }
     super.update(dt);
