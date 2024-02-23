@@ -278,7 +278,7 @@ class RedCar extends SpriteComponent with CollisionCallbacks {
   @override
   void update(double dt) {
     if (run && !back) {
-      a = 320;
+      a = 290;
     } else if (back && !run) {
       a = -260;
     } else {
