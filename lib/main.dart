@@ -26,10 +26,24 @@ class MyGame extends FlameGame with HasCollisionDetection {
   late SpriteComponent background;
   late SteeringWheel steeringWheel;
   late DRControl drControl;
+  bool init=false;
 
   Vector2? stapos, curpos; //
-  final cameraSize = Vector2(300, 533);
   List<WallPos> walls = [];
+
+  @override
+  void onGameResize(Vector2 size) {
+    if(init){
+      steeringWheel.position = Vector2(
+        size.x - steeringWheel.size.x / 2 - 30,
+        size.y - steeringWheel.size.y / 2 - 40);
+      drControl.position = Vector2(
+      drControl.size.x + 10,
+      size.y - drControl.size.y / 2 - 40,
+    );
+    }
+    super.onGameResize(size);
+  }
 
   @override
   Future<FutureOr<void>> onLoad() async {
@@ -37,13 +51,13 @@ class MyGame extends FlameGame with HasCollisionDetection {
     Sprite backgroundSprite = Sprite(await images.load('mymap.png'));
     background = SpriteComponent()
       ..sprite = backgroundSprite
-      ..size = backgroundSprite.originalSize * 3;
+      ..size = backgroundSprite.originalSize * 4;
     world.add(background);
 
     redCar = RedCar();
     redCar.anchor = Anchor.center;
-    redCar.position = Vector2(200, 550);
-    redCar.size = Vector2(45, 63) / 1.5;
+    redCar.position = Vector2(200, 550)*4/3;
+    redCar.size = Vector2(45, 63) /1.2;
     redCar.sprite = Sprite(await images.load('/RedCar.png'));
     redCar.debugMode = false;
     redCar.debugColor = const Color.fromARGB(196, 0, 119, 255);
@@ -52,7 +66,7 @@ class MyGame extends FlameGame with HasCollisionDetection {
     for (var map in data) {
       //map
       walls.add(WallPos(
-          3 * map['x1']!, 3 * map['y1']!, 3 * map['w']!, 3 * map['h']!));
+          4 * map['x1']!, 4 * map['y1']!, 4 * map['w']!, 4 * map['h']!));
     }
     for (int i = 0; i < walls.length; i++) {
       Wall wall = Wall()
@@ -60,27 +74,18 @@ class MyGame extends FlameGame with HasCollisionDetection {
         ..size = Vector2(walls[i].width, walls[i].height);
       world.add(wall);
     }
-    camera = CameraComponent.withFixedResolution(
-        width: cameraSize.x, height: cameraSize.y);
+    
     camera.viewfinder.anchor = Anchor.center;
 
     camera.follow(redCar);
-    // redCar.position.addListener(() {
-    //   camera.viewfinder.angle = redCar.angle;
-    // });
-
-    camera.setBounds(
-        Rectangle.fromLTRB(
-            cameraSize.x / 2,
-            cameraSize.y / 2,
-            background.size.x - cameraSize.x / 2,
-            background.size.y - cameraSize.y / 2),
-        considerViewport: true);
+    redCar.position.addListener(() {
+      camera.viewfinder.angle = redCar.angle;
+    });
 
     steeringWheel = SteeringWheel(redCar);
     steeringWheel.position = Vector2(
-        cameraSize.x - steeringWheel.size.x / 2 - 20,
-        cameraSize.y - steeringWheel.size.y / 2 - 20);
+        size.x - steeringWheel.size.x / 2 - 20,
+        size.y - steeringWheel.size.y / 2 - 20);
     steeringWheel.steeringWheelIcon.sprite =
         Sprite(await images.load('SteeringWheel.png'));
     steeringWheel.debugMode = false;
@@ -89,15 +94,16 @@ class MyGame extends FlameGame with HasCollisionDetection {
     drControl = DRControl(redCar);
     drControl.position = Vector2(
       drControl.size.x + 10,
-      cameraSize.y - drControl.size.y / 2 - 20,
+      size.y - drControl.size.y / 2 - 20,
     );
     drControl.debugMode = false;
     camera.viewport.add(drControl);
+    init=true;
   }
 }
 
 class SteeringWheelIcon extends SpriteComponent {
-  SteeringWheelIcon() : super(size: Vector2(100, 100), anchor: Anchor.center);
+  SteeringWheelIcon() : super(size: Vector2(130, 130), anchor: Anchor.center);
   double dir = 0;
 }
 
@@ -106,7 +112,7 @@ class SteeringWheel extends PositionComponent with DragCallbacks {
   RedCar redCar;
   SteeringWheelIcon steeringWheelIcon = SteeringWheelIcon();
   SteeringWheel(this.redCar)
-      : super(size: (Vector2(100, 100)), anchor: Anchor.center);
+      : super(size: (Vector2(130, 130)), anchor: Anchor.center);
 
   @override
   FutureOr<void> onLoad() {
@@ -138,7 +144,7 @@ class DRControl extends PositionComponent with DragCallbacks {
   double f = 0;
   RedCar redCar;
   DRControl(this.redCar)
-      : super(size: (Vector2(50, 100)), anchor: Anchor.center);
+      : super(size: (Vector2(50*1.2, 100*1.3)), anchor: Anchor.center);
 
   @override
   void render(Canvas canvas) {
@@ -148,7 +154,7 @@ class DRControl extends PositionComponent with DragCallbacks {
     Paint borderPaint = Paint()
       ..color = Colors.black
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 8;
+      ..strokeWidth = 8*1.2;
     canvas.drawRRect(
         RRect.fromLTRBR(0, 0, size.x, size.y, Radius.circular(size.y / 2)),
         paint);
@@ -160,7 +166,7 @@ class DRControl extends PositionComponent with DragCallbacks {
       ..style = PaintingStyle.fill;
     canvas.drawCircle(
         Offset(size.x / 2, (size.y - size.x) * (f + 1) / 2 + size.x / 2),
-        size.x / 2 - 6,
+        size.x / 2 - 6*1.2,
         cpaint);
     super.render(canvas);
   }
@@ -237,14 +243,14 @@ class RedCar extends SpriteComponent with CollisionCallbacks {
       ..strokeWidth = 10
       ..style = PaintingStyle.stroke;
     hitbox = PolygonHitbox([
-      Vector2(15, 3) / 1.5,
-      Vector2(3, 18) / 1.5,
-      Vector2(3, 51) / 1.5,
-      Vector2(15, 63) / 1.5,
-      Vector2(33, 63) / 1.5,
-      Vector2(45, 51) / 1.5,
-      Vector2(45, 18) / 1.5,
-      Vector2(33, 3) / 1.5
+      Vector2(15, 3)/1.2,
+      Vector2(3, 18)/1.2,
+      Vector2(3, 51)/1.2,
+      Vector2(15, 63)/1.2,
+      Vector2(33, 63)/1.2,
+      Vector2(45, 51)/1.2,
+      Vector2(45, 18)/1.2,
+      Vector2(33, 3) /1.2
     ])
       ..paint = paint
       ..renderShape = false;
