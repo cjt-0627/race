@@ -17,22 +17,23 @@ void main() async {
   await Flame.device.fullScreen();
   runApp(GameWidget(
     game: MyGame(),
-    mouseCursor: SystemMouseCursors.move,
+    mouseCursor: SystemMouseCursors.move, //
   ));
 }
 
 class MyGame extends FlameGame with HasCollisionDetection {
-  late RedCar redCar;
+  late RedCar redCar = RedCar(); //
   late SpriteComponent background;
   late SteeringWheel steeringWheel;
   late DRControl drControl;
 
-  Vector2? stapos, curpos;
+  Vector2? stapos, curpos; //
   final cameraSize = Vector2(300, 533);
   List<WallPos> walls = [];
 
   @override
   Future<FutureOr<void>> onLoad() async {
+    //FutureOr
     Sprite backgroundSprite = Sprite(await images.load('mymap.png'));
     background = SpriteComponent()
       ..sprite = backgroundSprite
@@ -41,14 +42,15 @@ class MyGame extends FlameGame with HasCollisionDetection {
 
     redCar = RedCar();
     redCar.anchor = Anchor.center;
-    redCar.position = Vector2(200,550);
+    redCar.position = Vector2(200, 550);
     redCar.size = Vector2(45, 63) / 1.5;
     redCar.sprite = Sprite(await images.load('/RedCar.png'));
-    redCar.debugMode = true;
+    redCar.debugMode = false;
     redCar.debugColor = const Color.fromARGB(196, 0, 119, 255);
     world.add(redCar);
-
+//
     for (var map in data) {
+      //map
       walls.add(WallPos(
           3 * map['x1']!, 3 * map['y1']!, 3 * map['w']!, 3 * map['h']!));
     }
@@ -63,9 +65,9 @@ class MyGame extends FlameGame with HasCollisionDetection {
     camera.viewfinder.anchor = Anchor.center;
 
     camera.follow(redCar);
-    redCar.position.addListener(() {
-      camera.viewfinder.angle = redCar.angle;
-    });
+    // redCar.position.addListener(() {
+    //   camera.viewfinder.angle = redCar.angle;
+    // });
 
     camera.setBounds(
         Rectangle.fromLTRB(
@@ -77,19 +79,19 @@ class MyGame extends FlameGame with HasCollisionDetection {
 
     steeringWheel = SteeringWheel(redCar);
     steeringWheel.position = Vector2(
-        cameraSize.x - steeringWheel.size.x / 2 - 10,
-        cameraSize.y - steeringWheel.size.y / 2 - 10);
+        cameraSize.x - steeringWheel.size.x / 2 - 20,
+        cameraSize.y - steeringWheel.size.y / 2 - 20);
     steeringWheel.steeringWheelIcon.sprite =
         Sprite(await images.load('SteeringWheel.png'));
-    steeringWheel.debugMode = true;
+    steeringWheel.debugMode = false;
     camera.viewport.add(steeringWheel);
 
     drControl = DRControl(redCar);
     drControl.position = Vector2(
       drControl.size.x + 10,
-      cameraSize.y - drControl.size.y / 2 - 10,
+      cameraSize.y - drControl.size.y / 2 - 20,
     );
-    drControl.debugMode = true;
+    drControl.debugMode = false;
     camera.viewport.add(drControl);
   }
 }
@@ -273,15 +275,12 @@ class RedCar extends SpriteComponent with CollisionCallbacks {
         dir += v * dt * -turn / size.y * pi / 4;
         angle = -dir + pi / 2;
       }
-      if(history.isEmpty || position!=history.last)
-      {
+      if (history.isEmpty || position != history.last) {
         history.add(position.clone());
       }
-    }
-    else
-    {
+    } else {
       history.removeLast();
-      position=history.last;
+      position = history.last;
     }
     super.update(dt);
   }
