@@ -39,3 +39,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+  fonts:
+    - family: Micro5
+      fonts:
+        - asset: assets/fonts/Micro5-Regular.ttf
