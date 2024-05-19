@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 
@@ -40,14 +42,14 @@ class DRControl extends PositionComponent with DragCallbacks {
     f = (event.localEndPosition.y * 2 - size.x) / (size.y - size.x) - 1;
     if (f > 1) f = 1;
     if (f < -1) f = -1;
-    redCar.run = -f;
+    redCar.run(f);
     super.onDragUpdate(event);
   }
 
   @override
   void onDragEnd(DragEndEvent event) {
     f = 0;
-    redCar.run = 0;
+    redCar.run(0);
     super.onDragEnd(event);
   }
 }

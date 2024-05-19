@@ -31,14 +31,14 @@ class SteeringWheel extends PositionComponent with DragCallbacks {
     if (dir > 1) dir = 1;
     if (dir < -1) dir = -1;
     steeringWheelIcon.angle = dir * pi / 2;
-    redCar.turn = dir;
+    redCar.turn ( dir);
     super.onDragUpdate(event);
   }
 
   @override
   void onDragEnd(DragEndEvent event) {
     dir = 0;
-    redCar.turn = 0;
+    redCar.turn(0);
     steeringWheelIcon.angle = 0;
     super.onDragEnd(event);
   }

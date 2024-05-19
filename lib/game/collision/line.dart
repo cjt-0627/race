@@ -5,8 +5,10 @@ import 'package:flame/components.dart';
 
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
 
-class Wall extends PositionComponent {
+class Line extends PositionComponent {
   late ShapeHitbox hitbox;
+  int step;
+  Line(this.step);
   @override
   FutureOr<void> onLoad() {
     final paint = Paint()
@@ -21,9 +23,3 @@ class Wall extends PositionComponent {
   }
 }
 
-class WallPos {
-  double x, y, w, h;
-  WallPos(this.x, this.y, this.w, this.h);
-  double get width => w == 0 ? 3 : w;
-  double get height => h == 0 ? 3 : h;
-}

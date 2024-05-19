@@ -4,18 +4,21 @@ import 'dart:math';
 import 'package:flame/components.dart';
 
 import 'package:flame/game.dart';
+import 'package:flame_forge2d/flame_forge2d.dart'hide Timer; 
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
 import 'package:jumpjump/data.dart';
+import 'package:jumpjump/game/background.dart';
 import 'package:jumpjump/game/collision/line.dart';
 import 'package:jumpjump/game/collision/wall.dart';
 import 'package:jumpjump/game/control/drcontrol.dart';
 import 'package:jumpjump/game/control/steering_wheel.dart';
 import 'package:jumpjump/game/red_car.dart';
 
-class MyGame extends FlameGame with HasCollisionDetection {
+class MyGame extends Forge2DGame {
+  MyGame() : super(gravity: Vector2(0, 0));
   late RouterComponent router;
-  late RedCar redCar ; //
-  late SpriteComponent background;
+  late RedCar redCar; 
+  late Background background;
   late SteeringWheel steeringWheel;
   late DRControl drControl;
   bool init = false;
@@ -23,7 +26,7 @@ class MyGame extends FlameGame with HasCollisionDetection {
   final timer = Timer(double.infinity, autoStart: false);
   final countdown = Timer(3, autoStart: false);
 
-  Vector2? stapos, curpos; //
+  Vector2? stapos, curpos; 
   List<WallPos> walls = [];
   List<Vector2> lines = [
     Vector2(877, 691) * 4,
@@ -44,8 +47,8 @@ class MyGame extends FlameGame with HasCollisionDetection {
   }
 
   @override
-  Future<FutureOr<void>> onLoad() async {
-    //FutureOr
+  Future<void> onLoad() async {
+    await super.onLoad();
     router = RouterComponent(
       routes: {
         'game-over': OverlayRoute(
@@ -130,30 +133,22 @@ class MyGame extends FlameGame with HasCollisionDetection {
       initialRoute: 'init',
     );
 
-    Sprite backgroundSprite = Sprite(await images.load('map.png'));
-    background = SpriteComponent()
-      ..sprite = backgroundSprite
-      ..size = backgroundSprite.originalSize * 4;
-    world.add(background);
+    background=Background(sprite:await loadSprite('mymap.png'));
+    await world.add(background);
+    
+    redCar = RedCar(router: router, timer: timer,position: Vector2(200,200),sprite:await loadSprite('RedCar.png') );
 
-    redCar = RedCar(router: router, timer: timer);
-    redCar.anchor = Anchor.center;
-    redCar.position = Vector2(542, 584) * 4;
-    redCar.size = Vector2(45, 63) / 1.2;
-    redCar.sprite = Sprite(await images.load('/RedCar.png'));
     redCar.debugMode = false;
     redCar.debugColor = const Color.fromARGB(196, 0, 119, 255);
-    world.add(redCar);
+    await world.add(redCar);
 //
     for (var map in data) {
       //map
       walls.add(WallPos(
-          4 * map['x1']!, 4 * map['y1']!, 4 * map['w']!, 4 * map['h']!));
+           map['x1']!,  map['y1']!,  map['w']!, map['h']!));
     }
     for (int i = 0; i < walls.length; i++) {
-      Wall wall = Wall()
-        ..position = Vector2(walls[i].x, walls[i].y)
-        ..size = Vector2(walls[i].width, walls[i].height);
+      Wall wall = Wall(position1:Vector2(walls[i].x, walls[i].y),position2:Vector2(walls[i].x2, walls[i].y2),background: background);
       world.add(wall);
     }
     for (int i = 0; i < lines.length; i++) {
@@ -164,10 +159,8 @@ class MyGame extends FlameGame with HasCollisionDetection {
     }
 
     camera.viewfinder.anchor = Anchor.center;
-    camera.viewfinder.position = background.size / 2;
-    redCar.position.addListener(() {
-      camera.viewfinder.angle = redCar.angle;
-    });
+    camera.viewfinder.position = Vector2.zero();
+
 
     steeringWheel = SteeringWheel(redCar);
     steeringWheel.position = Vector2(size.x - steeringWheel.size.x / 2 - 50,
@@ -193,24 +186,27 @@ class MyGame extends FlameGame with HasCollisionDetection {
     if (!init) {
       camera.viewfinder.zoom += dt * 0.3;
       camera.viewfinder.angle -= pi / 6 * dt;
-      camera.viewfinder.position +=
-          (redCar.position - background.size / 2) / 3 * dt;
+      // camera.viewfinder.position +=
+      //     (redCar.position - background.size / 2) / 3 * dt;
       if (camera.viewfinder.zoom >= 1) {
         router.pushNamed('start');
+        print(redCar.hashCode);
         camera.viewfinder.zoom = 1;
         camera.follow(redCar);
         camera.viewport.add(steeringWheel);
         camera.viewport.add(drControl);
         init = true;
       }
+      
+    }
+    else{
+      camera.moveTo(redCar.body.position);
     }
     super.update(dt);
   }
 
   void startGame() {
-    redCar.position = Vector2(542, 584) * 4;
-    redCar.angle = camera.viewfinder.angle = pi / 2;
-    redCar.dir = 0;
+
     countdown.onTick = () {
       timer.reset();
       timer.start();
@@ -237,7 +233,7 @@ class MyGame extends FlameGame with HasCollisionDetection {
             fontSize: 70,
             fontFamily: 'Micro5'),
       );
-      textPaintSpeed.render(canvas, "${(redCar.v / 4).round().abs()}",
+      textPaintSpeed.render(canvas, "${(0/ 4).round().abs()}",
           Vector2(size.x / 2, size.y),
           anchor: Anchor.bottomCenter);
       if (timer.isRunning()) {
