@@ -4,13 +4,13 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
+import 'package:jumpjump/game/car.dart';
 import 'package:jumpjump/game/red_car.dart';
 
 class DRControl extends PositionComponent with DragCallbacks {
   double f = 0;
-  RedCar redCar;
-  DRControl(this.redCar)
-      : super(size: (Vector2(65, 170)), anchor: Anchor.center);
+  Car car;
+  DRControl(this.car) : super(size: (Vector2(65, 170)), anchor: Anchor.center);
 
   @override
   void render(Canvas canvas) {
@@ -42,14 +42,14 @@ class DRControl extends PositionComponent with DragCallbacks {
     f = (event.localEndPosition.y * 2 - size.x) / (size.y - size.x) - 1;
     if (f > 1) f = 1;
     if (f < -1) f = -1;
-    redCar.run(f);
+    car.drvalue = -f;
     super.onDragUpdate(event);
   }
 
   @override
   void onDragEnd(DragEndEvent event) {
     f = 0;
-    redCar.run(0);
+    car.drvalue = 0;
     super.onDragEnd(event);
   }
 }

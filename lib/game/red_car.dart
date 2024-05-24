@@ -121,9 +121,9 @@ class RedCar extends BodyComponent with HasGameRef<Forge2DGame> {
   }
 
   void turn(double dir) {
-    final k=8.0,v = body.linearVelocity;
-    fc = Vector2(v.y, v.x) / sqrt(v.dot(v)) * dir * body.getMassData().mass/k;
-    body.angularVelocity = sqrt(v.dot(v)) * dir/k * 0.1;
+    final k = 8.0, v = body.linearVelocity;
+    fc = Vector2(v.y, v.x) / sqrt(v.dot(v)) * dir * body.getMassData().mass / k;
+    body.angularVelocity = sqrt(v.dot(v)) * dir / k * 0.1;
   }
 
   @override
@@ -163,7 +163,7 @@ class RedCar extends BodyComponent with HasGameRef<Forge2DGame> {
   void update(double dt) {
     Vector2 v = body.linearVelocity;
     body.applyLinearImpulse(impulseValue);
-    print(body.linearVelocity);
+    // print(body.linearVelocity);
     if (v != Vector2.zero()) {
       body.applyLinearImpulse(-v / sqrt(v.dot(v)) * 1000);
       body.applyLinearImpulse(fc);

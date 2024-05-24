@@ -4,10 +4,11 @@ import 'dart:math';
 import 'package:flame/components.dart';
 
 import 'package:flame/game.dart';
-import 'package:flame_forge2d/flame_forge2d.dart'hide Timer; 
+import 'package:flame_forge2d/flame_forge2d.dart' hide Timer;
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
 import 'package:jumpjump/data.dart';
 import 'package:jumpjump/game/background.dart';
+import 'package:jumpjump/game/car.dart';
 import 'package:jumpjump/game/collision/line.dart';
 import 'package:jumpjump/game/collision/wall.dart';
 import 'package:jumpjump/game/control/drcontrol.dart';
@@ -17,7 +18,8 @@ import 'package:jumpjump/game/red_car.dart';
 class MyGame extends Forge2DGame {
   MyGame() : super(gravity: Vector2(0, 0));
   late RouterComponent router;
-  late RedCar redCar; 
+  late RedCar redCar;
+  late Car car;
   late Background background;
   late SteeringWheel steeringWheel;
   late DRControl drControl;
@@ -26,7 +28,7 @@ class MyGame extends Forge2DGame {
   final timer = Timer(double.infinity, autoStart: false);
   final countdown = Timer(3, autoStart: false);
 
-  Vector2? stapos, curpos; 
+  Vector2? stapos, curpos;
   List<WallPos> walls = [];
   List<Vector2> lines = [
     Vector2(877, 691) * 4,
@@ -57,7 +59,7 @@ class MyGame extends Forge2DGame {
               alignment: Alignment.center,
               children: [
                 Container(
-                  color:Colors.grey.withAlpha(200),
+                  color: Colors.grey.withAlpha(200),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -65,9 +67,8 @@ class MyGame extends Forge2DGame {
                   children: [
                     Text(
                       'Time: ${timer.current.round()}',
-                      style: const TextStyle(
-                          fontSize: 40,
-                          fontFamily: 'Micro5'),
+                      style:
+                          const TextStyle(fontSize: 40, fontFamily: 'Micro5'),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -81,16 +82,14 @@ class MyGame extends Forge2DGame {
                               },
                               child: const Text('Play',
                                   style: TextStyle(
-                                      fontSize: 20,
-                                      fontFamily:
-                                          'Micro5')))),
+                                      fontSize: 20, fontFamily: 'Micro5')))),
                     )
                   ],
                 ),
               ],
             );
           },
-        ), 
+        ),
         'start': OverlayRoute((context, game) {
           return Stack(
             alignment: Alignment.center,
@@ -104,8 +103,7 @@ class MyGame extends Forge2DGame {
                 children: [
                   const Text(
                     'Welcome to My Race Game',
-                    style: TextStyle(
-                        fontSize: 40, fontFamily: 'Micro5'),
+                    style: TextStyle(fontSize: 40, fontFamily: 'Micro5'),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -119,9 +117,7 @@ class MyGame extends Forge2DGame {
                             },
                             child: const Text('Play',
                                 style: TextStyle(
-                                    fontSize: 20,
-                                    fontFamily:
-                                        'Micro5')))),
+                                    fontSize: 20, fontFamily: 'Micro5')))),
                   )
                 ],
               ),
@@ -133,22 +129,32 @@ class MyGame extends Forge2DGame {
       initialRoute: 'init',
     );
 
-    background=Background(sprite:await loadSprite('mymap.png'));
+    background = Background(sprite: await loadSprite('mymap.png'));
     await world.add(background);
-    
-    redCar = RedCar(router: router, timer: timer,position: Vector2(200,200),sprite:await loadSprite('RedCar.png') );
+
+    redCar = RedCar(
+        router: router,
+        timer: timer,
+        position: Vector2(200, 200),
+        sprite: await loadSprite('RedCar.png'));
 
     redCar.debugMode = false;
     redCar.debugColor = const Color.fromARGB(196, 0, 119, 255);
-    await world.add(redCar);
-//
+    // await world.add(redCar);
+
+    car = Car(await loadSprite('newcar.png'), Vector2(-1300, -850));
+    car.debugColor = Colors.red;
+    world.add(car);
+
     for (var map in data) {
       //map
-      walls.add(WallPos(
-           map['x1']!,  map['y1']!,  map['w']!, map['h']!));
+      walls.add(WallPos(map['x1']!, map['y1']!, map['w']!, map['h']!));
     }
     for (int i = 0; i < walls.length; i++) {
-      Wall wall = Wall(position1:Vector2(walls[i].x, walls[i].y),position2:Vector2(walls[i].x2, walls[i].y2),background: background);
+      Wall wall = Wall(
+          position1: Vector2(walls[i].x, walls[i].y),
+          position2: Vector2(walls[i].x2, walls[i].y2),
+          background: background);
       world.add(wall);
     }
     for (int i = 0; i < lines.length; i++) {
@@ -161,15 +167,14 @@ class MyGame extends Forge2DGame {
     camera.viewfinder.anchor = Anchor.center;
     camera.viewfinder.position = Vector2.zero();
 
-
-    steeringWheel = SteeringWheel(redCar);
+    steeringWheel = SteeringWheel(car);
     steeringWheel.position = Vector2(size.x - steeringWheel.size.x / 2 - 50,
         size.y - steeringWheel.size.y / 2 - 40);
     steeringWheel.steeringWheelIcon.sprite =
         Sprite(await images.load('SteeringWheel.png'));
     steeringWheel.debugMode = false;
 
-    drControl = DRControl(redCar);
+    drControl = DRControl(car);
     drControl.position = Vector2(
       drControl.size.x / 2 + 50,
       size.y - drControl.size.y / 2 - 40,
@@ -190,23 +195,20 @@ class MyGame extends Forge2DGame {
       //     (redCar.position - background.size / 2) / 3 * dt;
       if (camera.viewfinder.zoom >= 1) {
         router.pushNamed('start');
-        print(redCar.hashCode);
         camera.viewfinder.zoom = 1;
-        camera.follow(redCar);
+        camera.follow(car);
         camera.viewport.add(steeringWheel);
         camera.viewport.add(drControl);
         init = true;
       }
-      
-    }
-    else{
-      camera.moveTo(redCar.body.position);
+    } else {
+      camera.moveTo(car.body.position);
+      camera.viewfinder.angle = car.body.angle + pi;
     }
     super.update(dt);
   }
 
   void startGame() {
-
     countdown.onTick = () {
       timer.reset();
       timer.start();
@@ -220,33 +222,27 @@ class MyGame extends Forge2DGame {
     super.render(canvas);
     final TextPaint textPaintA = TextPaint(
       style: const TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-          fontFamily: 'Micro5'),
+          color: Colors.white, fontSize: 20, fontFamily: 'Micro5'),
     );
     textPaintA.render(canvas, 'By CJT & YCY', Vector2(size.x - 30, 10),
         anchor: Anchor.topRight);
     if (init) {
       final TextPaint textPaintSpeed = TextPaint(
         style: const TextStyle(
-            color: Colors.white,
-            fontSize: 70,
-            fontFamily: 'Micro5'),
+            color: Colors.white, fontSize: 70, fontFamily: 'Micro5'),
       );
-      textPaintSpeed.render(canvas, "${(0/ 4).round().abs()}",
-          Vector2(size.x / 2, size.y),
+      textPaintSpeed.render(
+          canvas, "${(0 / 4).round().abs()}", Vector2(size.x / 2, size.y),
           anchor: Anchor.bottomCenter);
       if (timer.isRunning()) {
         final TextPaint textPaint = TextPaint(
           style: const TextStyle(
-              color: Colors.white,
-              fontSize: 50,
-              fontFamily: 'Micro5'),
+              color: Colors.white, fontSize: 50, fontFamily: 'Micro5'),
         );
         textPaint.render(
           canvas,
           "Time: ${timer.current.round()}",
-          Vector2(30,10 ),
+          Vector2(30, 10),
         );
       }
       if (countdown.isRunning()) {

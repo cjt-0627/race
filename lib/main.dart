@@ -9,6 +9,6 @@ void main() async {
   await Flame.device.fullScreen();
   runApp(GameWidget(
     game: MyGame(),
-    mouseCursor: SystemMouseCursors.move, //
+    mouseCursor: SystemMouseCursors.move,
   ));
 }
