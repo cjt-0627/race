@@ -19,7 +19,7 @@ class Car extends BodyComponent {
   final ValueNotifier<int> lapNotifier = ValueNotifier<int>(1);
   late final Image _image;
   final size = const Size(6, 10);
-  final scale = 1.0;
+  final scale = 10.0;
   late final _renderPosition = -size.toOffset() / 2;
   late final _scaledRect = (size * scale).toRect();
   late final _renderRect = _renderPosition & size;
@@ -27,14 +27,14 @@ class Car extends BodyComponent {
   double stvalue = 0.0;
 
   final vertices = <Vector2>[
-    Vector2(-8.75, 25),
-    Vector2(-17.5, 12.5),
-    Vector2(-17.5, -12.5),
-    Vector2(-8.75, -25),
-    Vector2(8.75, -25),
-    Vector2(17.5, -12.5),
-    Vector2(17.5, 12.5),
-    Vector2(8.75, 25),
+    Vector2(1.5, -5.0),
+    Vector2(3.0, -2.5),
+    Vector2(2.8, 0.5),
+    Vector2(1.0, 5.0),
+    Vector2(-1.0, 5.0),
+    Vector2(-2.8, 0.5),
+    Vector2(-3.0, -2.5),
+    Vector2(-1.5, -5.0),
   ];
 
   @override
@@ -66,7 +66,7 @@ class Car extends BodyComponent {
     );
     add(SpriteComponent(
         sprite: sprite,
-        size: Vector2(27, 50),
+        size: Vector2(6.48, 12),
         anchor: Anchor.center,
         angle: pi));
   }

@@ -141,9 +141,8 @@ class MyGame extends Forge2DGame {
     redCar.debugMode = false;
     redCar.debugColor = const Color.fromARGB(196, 0, 119, 255);
     // await world.add(redCar);
-
-    car = Car(await loadSprite('newcar.png'), Vector2(-1300, -850));
-    car.debugColor = Colors.red;
+// Vector2(-1300, -870)
+    car = Car(await loadSprite('newcar.png'), Vector2(-240, -170));
     world.add(car);
 
     for (var map in data) {
@@ -180,7 +179,7 @@ class MyGame extends Forge2DGame {
       size.y - drControl.size.y / 2 - 40,
     );
     drControl.debugMode = false;
-    camera.viewfinder.zoom = 0.1;
+    camera.viewfinder.zoom = 1;
     add(router);
   }
 
@@ -189,13 +188,12 @@ class MyGame extends Forge2DGame {
     timer.update(dt);
     countdown.update(dt);
     if (!init) {
-      camera.viewfinder.zoom += dt * 0.3;
-      camera.viewfinder.angle -= pi / 6 * dt;
-      // camera.viewfinder.position +=
-      //     (redCar.position - background.size / 2) / 3 * dt;
-      if (camera.viewfinder.zoom >= 1) {
+      camera.viewfinder.zoom += dt * 5 / 3;
+      camera.viewfinder.angle += pi / 6 * dt;
+      camera.viewfinder.position += (car.startPosition) / 3 * dt;
+      if (camera.viewfinder.zoom >= 5) {
         router.pushNamed('start');
-        camera.viewfinder.zoom = 1;
+        camera.viewfinder.zoom = 5;
         camera.follow(car);
         camera.viewport.add(steeringWheel);
         camera.viewport.add(drControl);

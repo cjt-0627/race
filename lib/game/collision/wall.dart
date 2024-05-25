@@ -41,14 +41,20 @@ class Wall extends BodyComponent {
       required this.background});
   @override
   Body createBody() {
-    final shape = EdgeShape()..set((position1-background.sprite.srcSize)*4, (position2-background.sprite.srcSize)*4);
+    final shape = EdgeShape()
+      ..set((position1 - background.sprite.srcSize) * 4 / 5,
+          (position2 - background.sprite.srcSize) * 4 / 5);
     final fixtureDef = FixtureDef(shape, friction: .4);
     final bodyDef = BodyDef(userData: this, position: Vector2.zero());
+    paint = Paint()
+      ..color = Colors.blue
+      ..strokeWidth = 1;
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
+
   @override
   Future<void> onLoad() {
-    renderBody=false;
+    renderBody = false;
     return super.onLoad();
   }
 }

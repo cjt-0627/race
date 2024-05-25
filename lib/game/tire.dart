@@ -1,7 +1,6 @@
 import 'package:flame/palette.dart';
 import 'package:flame_forge2d/flame_forge2d.dart' hide Particle, World;
 import 'package:flutter/material.dart' hide Image, Gradient;
-import 'package:flutter/services.dart';
 import 'package:jumpjump/game/car.dart';
 
 class Tire extends BodyComponent {
@@ -13,19 +12,18 @@ class Tire extends BodyComponent {
     this.isTurnableTire = false,
   }) : super(
           paint: Paint()
-            ..color = car.paint.color
-            ..strokeWidth = 0.2
-            ..style = PaintingStyle.stroke,
+            ..color = Colors.black
+            ..style = PaintingStyle.fill,
           priority: 2,
         );
 
-  static const double _backTireMaxDriveForce = 3000;
-  static const double _frontTireMaxDriveForce = 6000;
-  static const double _backTireMaxLateralImpulse = 85;
-  static const double _frontTireMaxLateralImpulse = 75;
+  static const double _backTireMaxDriveForce = 300.0;
+  static const double _frontTireMaxDriveForce = 600.0;
+  static const double _backTireMaxLateralImpulse = 8.5;
+  static const double _frontTireMaxLateralImpulse = 7.5;
 
   final Car car;
-  final size = Vector2(2, 5);
+  final size = Vector2(0.5, 1.25);
   late final RRect _renderRect = RRect.fromLTRBR(
     -size.x,
     -size.y,
@@ -42,8 +40,8 @@ class Tire extends BodyComponent {
   // Make mutable if ice or something should be implemented
   final double _currentTraction = 1.0;
 
-  final double _maxForwardSpeed = 2500;
-  final double _maxBackwardSpeed = -400;
+  final double _maxForwardSpeed = 250.0;
+  final double _maxBackwardSpeed = -40.0;
 
   final RevoluteJointDef jointDef;
   late final RevoluteJoint joint;
@@ -59,8 +57,8 @@ class Tire extends BodyComponent {
   @override
   Body createBody() {
     final jointAnchor = Vector2(
-      isLeftTire ? -15.0 : 15.0,
-      isFrontTire ? 20 : -22,
+      isLeftTire ? -3.0 : 3.0,
+      isFrontTire ? 3.5 : -4.25,
     );
 
     final def = BodyDef()
@@ -84,15 +82,15 @@ class Tire extends BodyComponent {
     _updateTurn(dt);
     _updateFriction();
     // if (!game.isGameOver) {
-    print(-10);
     _updateDrive();
     // }
     // }
+    print(body.linearVelocity);
   }
 
   @override
   void render(Canvas canvas) {
-    canvas.drawRRect(_renderRect, _black);
+    // canvas.drawRRect(_renderRect, _black);
     canvas.drawRRect(_renderRect, paint);
   }
 
@@ -116,7 +114,6 @@ class Tire extends BodyComponent {
   }
 
   void _updateDrive() {
-    print(car.drvalue);
     var desiredSpeed = 0.0;
     if (car.drvalue > 0) {
       desiredSpeed = _maxForwardSpeed * car.drvalue;
@@ -140,17 +137,16 @@ class Tire extends BodyComponent {
   }
 
   void _updateTurn(double dt) {
-    print(car.stvalue);
     var desiredAngle = 0.0;
     var desiredTorque = 0.0;
     var isTurning = false;
     if (car.stvalue < 0) {
-      desiredTorque = 150.0 * car.stvalue;
+      desiredTorque = 15.0 * car.stvalue;
       desiredAngle = -_lockAngle;
       isTurning = true;
     }
     if (car.stvalue > 0) {
-      desiredTorque += 150.0 * car.stvalue;
+      desiredTorque += 15.0 * car.stvalue;
       desiredAngle += _lockAngle;
       isTurning = true;
     }
