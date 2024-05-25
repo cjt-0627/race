@@ -35,6 +35,7 @@ class WallPos {
 class Wall extends BodyComponent {
   final Vector2 position1, position2;
   final Background background;
+  double num=4.3;
   Wall(
       {required this.position1,
       required this.position2,
@@ -42,8 +43,8 @@ class Wall extends BodyComponent {
   @override
   Body createBody() {
     final shape = EdgeShape()
-      ..set((position1 - background.sprite.srcSize) * 4 / 5,
-          (position2 - background.sprite.srcSize) * 4 / 5);
+      ..set((position1 - background.sprite.srcSize/2) * 4 / num,
+          (position2 - background.sprite.srcSize/2) * 4 / num);
     final fixtureDef = FixtureDef(shape, friction: .4);
     final bodyDef = BodyDef(userData: this, position: Vector2.zero());
     paint = Paint()

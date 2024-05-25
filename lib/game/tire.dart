@@ -81,9 +81,9 @@ class Tire extends BodyComponent {
     // if (body.isAwake) {
     _updateTurn(dt);
     _updateFriction();
-    // if (!game.isGameOver) {
+    if (car.timer.isRunning()) {
     _updateDrive();
-    // }
+    }
     // }
     print(body.linearVelocity);
   }

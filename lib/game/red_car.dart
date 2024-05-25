@@ -120,7 +120,7 @@ class RedCar extends BodyComponent with HasGameRef<Forge2DGame> {
         Vector2(10 * sin(body.angle), 10 * cos(body.angle)) * 10000 * degree;
   }
 
-  void turn(double dir) {
+    void turn(double dir) {
     final k = 8.0, v = body.linearVelocity;
     fc = Vector2(v.y, v.x) / sqrt(v.dot(v)) * dir * body.getMassData().mass / k;
     body.angularVelocity = sqrt(v.dot(v)) * dir / k * 0.1;

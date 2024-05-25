@@ -31,9 +31,9 @@ class MyGame extends Forge2DGame {
   Vector2? stapos, curpos;
   List<WallPos> walls = [];
   List<Vector2> lines = [
-    Vector2(877, 691) * 4,
-    Vector2(774, 771) * 4,
-    Vector2(549, 627) * 4
+    Vector2(688, 719) ,
+    Vector2(768, 932) ,
+    Vector2(624, 1051) 
   ];
   @override
   void onGameResize(Vector2 size) {
@@ -129,7 +129,7 @@ class MyGame extends Forge2DGame {
       initialRoute: 'init',
     );
 
-    background = Background(sprite: await loadSprite('mymap.png'));
+    background = Background(sprite: await loadSprite('map.png'));
     await world.add(background);
 
     redCar = RedCar(
@@ -142,7 +142,7 @@ class MyGame extends Forge2DGame {
     redCar.debugColor = const Color.fromARGB(196, 0, 119, 255);
     // await world.add(redCar);
 // Vector2(-1300, -870)
-    car = Car(await loadSprite('newcar.png'), Vector2(-240, -170));
+    car = Car(await loadSprite('newcar.png'), Vector2(-200,240),timer);
     world.add(car);
 
     for (var map in data) {
@@ -156,10 +156,10 @@ class MyGame extends Forge2DGame {
           background: background);
       world.add(wall);
     }
+    Vector2 n=Vector2(44,73 );
     for (int i = 0; i < lines.length; i++) {
-      Line line = Line(i + 1)
-        ..position = lines[i]
-        ..size = Vector2(6, 42) * 4;
+      Line line = Line(position1:lines[i]*4/4.3+n,position2: (lines[i]+Vector2(60,0))*4/4.3+n,step: i ,background:background,router:router);
+
       world.add(line);
     }
 
@@ -189,7 +189,6 @@ class MyGame extends Forge2DGame {
     countdown.update(dt);
     if (!init) {
       camera.viewfinder.zoom += dt * 5 / 3;
-      camera.viewfinder.angle += pi / 6 * dt;
       camera.viewfinder.position += (car.startPosition) / 3 * dt;
       if (camera.viewfinder.zoom >= 5) {
         router.pushNamed('start');
@@ -229,8 +228,9 @@ class MyGame extends Forge2DGame {
         style: const TextStyle(
             color: Colors.white, fontSize: 70, fontFamily: 'Micro5'),
       );
+      Vector2 v=car.body.linearVelocity;
       textPaintSpeed.render(
-          canvas, "${(0 / 4).round().abs()}", Vector2(size.x / 2, size.y),
+          canvas, "${sqrt(v.dot(v)).round()}", Vector2(size.x / 2, size.y),
           anchor: Anchor.bottomCenter);
       if (timer.isRunning()) {
         final TextPaint textPaint = TextPaint(

@@ -8,23 +8,24 @@ import 'package:forge2d/src/dynamics/body.dart';
 
 class Background extends BodyComponent {
   final Sprite sprite;
+  double num=4.3;
   Background({required this.sprite});
   @override
   Future<void> onLoad() async {
     await super.onLoad();
     renderBody = true;
     add(SpriteComponent(
-        sprite: sprite, size: sprite.srcSize * 4 / 5, anchor: Anchor.center));
+        sprite: sprite, size: sprite.srcSize * 4 / num, anchor: Anchor.center));
   }
 
   @override
   Body createBody() {
     final shape = PolygonShape();
     final vertices = [
-      Vector2(-sprite.srcSize.x * 4 / 2 / 5, sprite.srcSize.y * 4 / 2 / 5),
-      Vector2(sprite.srcSize.x * 4 / 2 / 5, sprite.srcSize.y * 4 / 2 / 5),
-      Vector2(-sprite.srcSize.x * 4 / 2 / 5, -sprite.srcSize.y * 4 / 2 / 5),
-      Vector2(sprite.srcSize.x * 4 / 2 / 5, -sprite.srcSize.y * 4 / 2 / 5),
+      Vector2(-sprite.srcSize.x * 4 / 2 / num, sprite.srcSize.y * 4 / 2 / num),
+      Vector2(sprite.srcSize.x * 4 / 2 / num, sprite.srcSize.y * 4 / 2 / num),
+      Vector2(-sprite.srcSize.x * 4 / 2 / num, -sprite.srcSize.y * 4 / 2 / num),
+      Vector2(sprite.srcSize.x * 4 / 2 / num, -sprite.srcSize.y * 4 / 2 / num),
     ];
     shape.set(vertices);
     final fixtureDef =
