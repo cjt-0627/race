@@ -15,12 +15,10 @@ import 'package:jumpjump/game/collision/line.dart';
 import 'package:jumpjump/game/collision/wall.dart';
 import 'package:jumpjump/game/control/drcontrol.dart';
 import 'package:jumpjump/game/control/steering_wheel.dart';
-import 'package:jumpjump/game/red_car.dart';
 
 class MyGame extends Forge2DGame with KeyboardEvents {
   MyGame() : super(gravity: Vector2(0, 0));
   late RouterComponent router;
-  late RedCar redCar;
   late Car car;
   late Background background;
   late SteeringWheel steeringWheel;
@@ -29,37 +27,43 @@ class MyGame extends Forge2DGame with KeyboardEvents {
 
   final timer = Timer(double.infinity, autoStart: false);
   final countdown = Timer(3, autoStart: false);
-  final reset=Timer(
-    0.01,
-    repeat:true
-  );
+  final reset = Timer(0.01, repeat: true);
   Vector2? stapos, curpos;
   List<WallPos> walls = [];
   List<Vector2> lines = [
-    Vector2(688, 719) ,
-    Vector2(768, 932) ,
-    Vector2(624, 1051) 
+    Vector2(688, 719),
+    Vector2(768, 932),
+    Vector2(624, 1051)
   ];
 
- @override
+  @override
   KeyEventResult onKeyEvent(event, Set<LogicalKeyboardKey> keysPressed) {
     if (keysPressed.contains(LogicalKeyboardKey.arrowUp) ||
         keysPressed.contains(LogicalKeyboardKey.keyW)) {
       car.drvalue = 1;
+      drControl.f = -1;
     } else if (keysPressed.contains(LogicalKeyboardKey.arrowDown) ||
         keysPressed.contains(LogicalKeyboardKey.keyS)) {
       car.drvalue = -1;
+      drControl.f = 1;
     } else {
       car.drvalue = 0;
+      drControl.f = 0;
     }
     if (keysPressed.contains(LogicalKeyboardKey.arrowLeft) ||
         keysPressed.contains(LogicalKeyboardKey.keyA)) {
       car.stvalue = -1;
+      steeringWheel.dir = -1;
+      steeringWheel.updateIcon();
     } else if (keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
         keysPressed.contains(LogicalKeyboardKey.keyD)) {
       car.stvalue = 1;
+      steeringWheel.dir = 1;
+      steeringWheel.updateIcon();
     } else {
       car.stvalue = 0;
+      steeringWheel.dir = 0;
+      steeringWheel.updateIcon();
     }
     return super.onKeyEvent(event, keysPressed);
   }
@@ -160,22 +164,10 @@ class MyGame extends Forge2DGame with KeyboardEvents {
 
     background = Background(sprite: await loadSprite('map.png'));
     await world.add(background);
-
-    redCar = RedCar(
-        router: router,
-        timer: timer,
-        position: Vector2(200, 200),
-        sprite: await loadSprite('RedCar.png'));
-
-    redCar.debugMode = false;
-    redCar.debugColor = const Color.fromARGB(196, 0, 119, 255);
-    // await world.add(redCar);
-// Vector2(-1300, -870)
-    car = Car(await loadSprite('newcar.png'), Vector2(-150,240),timer);
+    car = Car(await loadSprite('newcar.png'), Vector2(-150, 240), timer);
     world.add(car);
 
     for (var map in data) {
-      //map
       walls.add(WallPos(map['x1']!, map['y1']!, map['w']!, map['h']!));
     }
     for (int i = 0; i < walls.length; i++) {
@@ -185,9 +177,14 @@ class MyGame extends Forge2DGame with KeyboardEvents {
           background: background);
       world.add(wall);
     }
-    Vector2 n=Vector2(44,73 );
+    Vector2 n = Vector2(44, 73);
     for (int i = 0; i < lines.length; i++) {
-      Line line = Line(position1:lines[i]*4/4.3+n,position2: (lines[i]+Vector2(60,0))*4/4.3+n,step: i ,background:background,router:router);
+      Line line = Line(
+          position1: lines[i] * 4 / 4.3 + n,
+          position2: (lines[i] + Vector2(60, 0)) * 4 / 4.3 + n,
+          step: i,
+          background: background,
+          router: router);
 
       world.add(line);
     }
@@ -241,10 +238,10 @@ class MyGame extends Forge2DGame with KeyboardEvents {
       timer.start();
       reset.stop();
     };
-    reset.onTick=(){
+    reset.onTick = () {
       car.body.setTransform(Vector2(-150, 240), pi);
     };
-    car.step=-1;
+    car.step = -1;
     countdown.reset();
     countdown.start();
     reset.start();
@@ -264,7 +261,7 @@ class MyGame extends Forge2DGame with KeyboardEvents {
         style: const TextStyle(
             color: Colors.white, fontSize: 70, fontFamily: 'Micro5'),
       );
-      Vector2 v=car.body.linearVelocity;
+      Vector2 v = car.body.linearVelocity;
       textPaintSpeed.render(
           canvas, "${sqrt(v.dot(v)).round()}", Vector2(size.x / 2, size.y),
           anchor: Anchor.bottomCenter);

@@ -1,4 +1,3 @@
-import 'package:flame/palette.dart';
 import 'package:flame_forge2d/flame_forge2d.dart' hide Particle, World;
 import 'package:flutter/material.dart' hide Image, Gradient;
 import 'package:jumpjump/game/car.dart';
@@ -52,8 +51,6 @@ class Tire extends BodyComponent {
   final double _lockAngle = 0.6;
   final double _turnSpeedPerSecond = 4;
 
-  final Paint _black = BasicPalette.black.paint();
-
   @override
   Body createBody() {
     final jointAnchor = Vector2(
@@ -82,10 +79,9 @@ class Tire extends BodyComponent {
     _updateTurn(dt);
     _updateFriction();
     if (car.timer.isRunning()) {
-    _updateDrive();
+      _updateDrive();
     }
     // }
-    print(body.linearVelocity);
   }
 
   @override

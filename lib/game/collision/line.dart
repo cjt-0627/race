@@ -1,7 +1,4 @@
 import 'dart:async';
-
-import 'package:flame/collisions.dart';
-import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 
@@ -58,6 +55,7 @@ class Line extends BodyComponent with ContactCallbacks {
     renderBody = false;
     return super.onLoad();
   }
+
   @override
   void beginContact(Object other, Contact contact) {
     if (other is Car && (other.step - step).abs() <= 1) {

@@ -1,12 +1,7 @@
 import 'dart:async';
-
-import 'package:flame/collisions.dart';
-import 'package:flame/components.dart';
-import 'package:flame_forge2d/body_component.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
-import 'package:forge2d/src/dynamics/body.dart';
 import 'package:jumpjump/game/background.dart';
 
 // class Wall2 extends PositionComponent {
@@ -35,7 +30,7 @@ class WallPos {
 class Wall extends BodyComponent {
   final Vector2 position1, position2;
   final Background background;
-  double num=4.3;
+  double num = 4.3;
   Wall(
       {required this.position1,
       required this.position2,
@@ -43,10 +38,11 @@ class Wall extends BodyComponent {
   @override
   Body createBody() {
     final shape = EdgeShape()
-      ..set((position1 - background.sprite.srcSize/2) * 4 / num,
-          (position2 - background.sprite.srcSize/2) * 4 / num);
-    final fixtureDef = FixtureDef(shape, friction: .4,restitution: 0.5);
-    final bodyDef = BodyDef(userData: this, position: Vector2.zero(),angularDamping: 3.0);
+      ..set((position1 - background.sprite.srcSize / 2) * 4 / num,
+          (position2 - background.sprite.srcSize / 2) * 4 / num);
+    final fixtureDef = FixtureDef(shape, friction: .4, restitution: 0.5);
+    final bodyDef =
+        BodyDef(userData: this, position: Vector2.zero(), angularDamping: 3.0);
     paint = Paint()
       ..color = Colors.blue
       ..strokeWidth = 1;

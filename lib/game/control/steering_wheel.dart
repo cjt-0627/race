@@ -5,8 +5,6 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:jumpjump/game/car.dart';
 
-import 'package:jumpjump/game/red_car.dart';
-
 class SteeringWheelIcon extends SpriteComponent {
   SteeringWheelIcon() : super(size: Vector2(180, 180), anchor: Anchor.center);
   double dir = 0;
@@ -31,7 +29,7 @@ class SteeringWheel extends PositionComponent with DragCallbacks {
     dir = event.localEndPosition.x / size.x * 2 - 1;
     if (dir > 1) dir = 1;
     if (dir < -1) dir = -1;
-    steeringWheelIcon.angle = dir * pi / 2;
+    updateIcon();
     car.stvalue = dir;
     super.onDragUpdate(event);
   }
@@ -39,8 +37,12 @@ class SteeringWheel extends PositionComponent with DragCallbacks {
   @override
   void onDragEnd(DragEndEvent event) {
     dir = 0;
+    updateIcon();
     car.stvalue = dir;
-    steeringWheelIcon.angle = 0;
     super.onDragEnd(event);
+  }
+
+  void updateIcon() {
+    steeringWheelIcon.angle = dir * pi / 2;
   }
 }

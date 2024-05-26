@@ -1,14 +1,9 @@
-import 'dart:math';
-
 import 'package:flame/components.dart';
-import 'package:flame/experimental.dart';
-import 'package:flame_forge2d/body_component.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
-import 'package:forge2d/src/dynamics/body.dart';
 
 class Background extends BodyComponent {
   final Sprite sprite;
-  double num=4.3;
+  double num = 4.3;
   Background({required this.sprite});
   @override
   Future<void> onLoad() async {
