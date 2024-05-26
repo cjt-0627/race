@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 
 import 'package:flame/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart' hide Timer;
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
+import 'package:flutter/services.dart';
 import 'package:jumpjump/data.dart';
 import 'package:jumpjump/game/background.dart';
 import 'package:jumpjump/game/car.dart';
@@ -15,7 +17,7 @@ import 'package:jumpjump/game/control/drcontrol.dart';
 import 'package:jumpjump/game/control/steering_wheel.dart';
 import 'package:jumpjump/game/red_car.dart';
 
-class MyGame extends Forge2DGame {
+class MyGame extends Forge2DGame with KeyboardEvents {
   MyGame() : super(gravity: Vector2(0, 0));
   late RouterComponent router;
   late RedCar redCar;
@@ -27,7 +29,10 @@ class MyGame extends Forge2DGame {
 
   final timer = Timer(double.infinity, autoStart: false);
   final countdown = Timer(3, autoStart: false);
-
+  final reset=Timer(
+    0.01,
+    repeat:true
+  );
   Vector2? stapos, curpos;
   List<WallPos> walls = [];
   List<Vector2> lines = [
@@ -35,6 +40,30 @@ class MyGame extends Forge2DGame {
     Vector2(768, 932) ,
     Vector2(624, 1051) 
   ];
+
+ @override
+  KeyEventResult onKeyEvent(event, Set<LogicalKeyboardKey> keysPressed) {
+    if (keysPressed.contains(LogicalKeyboardKey.arrowUp) ||
+        keysPressed.contains(LogicalKeyboardKey.keyW)) {
+      car.drvalue = 1;
+    } else if (keysPressed.contains(LogicalKeyboardKey.arrowDown) ||
+        keysPressed.contains(LogicalKeyboardKey.keyS)) {
+      car.drvalue = -1;
+    } else {
+      car.drvalue = 0;
+    }
+    if (keysPressed.contains(LogicalKeyboardKey.arrowLeft) ||
+        keysPressed.contains(LogicalKeyboardKey.keyA)) {
+      car.stvalue = -1;
+    } else if (keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
+        keysPressed.contains(LogicalKeyboardKey.keyD)) {
+      car.stvalue = 1;
+    } else {
+      car.stvalue = 0;
+    }
+    return super.onKeyEvent(event, keysPressed);
+  }
+
   @override
   void onGameResize(Vector2 size) {
     if (init) {
@@ -142,7 +171,7 @@ class MyGame extends Forge2DGame {
     redCar.debugColor = const Color.fromARGB(196, 0, 119, 255);
     // await world.add(redCar);
 // Vector2(-1300, -870)
-    car = Car(await loadSprite('newcar.png'), Vector2(-200,240),timer);
+    car = Car(await loadSprite('newcar.png'), Vector2(-150,240),timer);
     world.add(car);
 
     for (var map in data) {
@@ -185,6 +214,7 @@ class MyGame extends Forge2DGame {
 
   @override
   void update(double dt) {
+    reset.update(dt);
     timer.update(dt);
     countdown.update(dt);
     if (!init) {
@@ -209,9 +239,15 @@ class MyGame extends Forge2DGame {
     countdown.onTick = () {
       timer.reset();
       timer.start();
+      reset.stop();
     };
+    reset.onTick=(){
+      car.body.setTransform(Vector2(-150, 240), pi);
+    };
+    car.step=-1;
     countdown.reset();
     countdown.start();
+    reset.start();
   }
 
   @override
