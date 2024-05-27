@@ -40,7 +40,7 @@ class Wall extends BodyComponent {
     final shape = EdgeShape()
       ..set((position1 - background.sprite.srcSize / 2) * 4 / num,
           (position2 - background.sprite.srcSize / 2) * 4 / num);
-    final fixtureDef = FixtureDef(shape, friction: .4, restitution: 0.5);
+    final fixtureDef = FixtureDef(shape, friction: 0, restitution: 0.5);
     final bodyDef =
         BodyDef(userData: this, position: Vector2.zero(), angularDamping: 3.0);
     paint = Paint()

@@ -76,7 +76,9 @@ class Tire extends BodyComponent {
   @override
   void update(double dt) {
     // if (body.isAwake) {
-    _updateTurn(dt);
+    if (car.timer.isRunning()) {
+      _updateTurn(dt);
+    }
     _updateFriction();
     if (car.timer.isRunning()) {
       _updateDrive();
@@ -138,12 +140,12 @@ class Tire extends BodyComponent {
     var isTurning = false;
     if (car.stvalue < 0) {
       desiredTorque = 15.0 * car.stvalue;
-      desiredAngle = -_lockAngle;
+      desiredAngle = _lockAngle * car.stvalue;
       isTurning = true;
     }
     if (car.stvalue > 0) {
       desiredTorque += 15.0 * car.stvalue;
-      desiredAngle += _lockAngle;
+      desiredAngle += _lockAngle * car.stvalue;
       isTurning = true;
     }
     if (isTurnableTire && isTurning) {

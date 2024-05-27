@@ -14,6 +14,7 @@ import 'package:jumpjump/game/car.dart';
 import 'package:jumpjump/game/collision/line.dart';
 import 'package:jumpjump/game/collision/wall.dart';
 import 'package:jumpjump/game/control/drcontrol.dart';
+import 'package:jumpjump/game/control/reset.dart';
 import 'package:jumpjump/game/control/steering_wheel.dart';
 
 class MyGame extends Forge2DGame with KeyboardEvents {
@@ -23,6 +24,7 @@ class MyGame extends Forge2DGame with KeyboardEvents {
   late Background background;
   late SteeringWheel steeringWheel;
   late DRControl drControl;
+  late ResetButton resetButton;
   bool init = false;
 
   final timer = Timer(double.infinity, autoStart: false);
@@ -65,6 +67,9 @@ class MyGame extends Forge2DGame with KeyboardEvents {
       steeringWheel.dir = 0;
       steeringWheel.updateIcon();
     }
+    if (keysPressed.contains(LogicalKeyboardKey.keyR)) {
+      startGame();
+    }
     return super.onKeyEvent(event, keysPressed);
   }
 
@@ -92,7 +97,7 @@ class MyGame extends Forge2DGame with KeyboardEvents {
               alignment: Alignment.center,
               children: [
                 Container(
-                  color: Colors.grey.withAlpha(200),
+                  color: Colors.grey.withAlpha(220),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -113,9 +118,14 @@ class MyGame extends Forge2DGame with KeyboardEvents {
                                 startGame();
                                 router.pop();
                               },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    const Color.fromARGB(255, 219, 158, 130),
+                                foregroundColor: Colors.white,
+                              ),
                               child: const Text('Play',
                                   style: TextStyle(
-                                      fontSize: 20, fontFamily: 'Micro5')))),
+                                      fontSize: 40, fontFamily: 'Micro5')))),
                     )
                   ],
                 ),
@@ -128,14 +138,18 @@ class MyGame extends Forge2DGame with KeyboardEvents {
             alignment: Alignment.center,
             children: [
               Container(
-                color: Colors.grey.withAlpha(200),
+                color: Colors.grey.withAlpha(220),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Welcome to My Race Game',
+                    'Drag Racing',
+                    style: TextStyle(fontSize: 60, fontFamily: 'Micro5'),
+                  ),
+                  const Text(
+                    'A racing game made with FlameGame.',
                     style: TextStyle(fontSize: 40, fontFamily: 'Micro5'),
                   ),
                   Padding(
@@ -148,9 +162,14 @@ class MyGame extends Forge2DGame with KeyboardEvents {
                               startGame();
                               router.pop();
                             },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  const Color.fromARGB(255, 219, 158, 130),
+                              foregroundColor: Colors.white,
+                            ),
                             child: const Text('Play',
                                 style: TextStyle(
-                                    fontSize: 20, fontFamily: 'Micro5')))),
+                                    fontSize: 40, fontFamily: 'Micro5')))),
                   )
                 ],
               ),
@@ -169,13 +188,6 @@ class MyGame extends Forge2DGame with KeyboardEvents {
 
     for (var map in data) {
       walls.add(WallPos(map['x1']!, map['y1']!, map['w']!, map['h']!));
-    }
-    for (int i = 0; i < walls.length; i++) {
-      Wall wall = Wall(
-          position1: Vector2(walls[i].x, walls[i].y),
-          position2: Vector2(walls[i].x2, walls[i].y2),
-          background: background);
-      world.add(wall);
     }
     Vector2 n = Vector2(44, 73);
     for (int i = 0; i < lines.length; i++) {
@@ -197,14 +209,16 @@ class MyGame extends Forge2DGame with KeyboardEvents {
         size.y - steeringWheel.size.y / 2 - 40);
     steeringWheel.steeringWheelIcon.sprite =
         Sprite(await images.load('SteeringWheel.png'));
-    steeringWheel.debugMode = false;
 
     drControl = DRControl(car);
     drControl.position = Vector2(
       drControl.size.x / 2 + 50,
       size.y - drControl.size.y / 2 - 40,
     );
-    drControl.debugMode = false;
+
+    resetButton = ResetButton();
+    resetButton.position = Vector2(size.x - resetButton.size.x / 2 - 50, 80);
+    resetButton.onPressed = () => startGame();
     camera.viewfinder.zoom = 1;
     add(router);
   }
@@ -223,6 +237,7 @@ class MyGame extends Forge2DGame with KeyboardEvents {
         camera.follow(car);
         camera.viewport.add(steeringWheel);
         camera.viewport.add(drControl);
+        camera.viewport.add(resetButton);
         init = true;
       }
     } else {
@@ -237,11 +252,24 @@ class MyGame extends Forge2DGame with KeyboardEvents {
       timer.reset();
       timer.start();
       reset.stop();
+      for (int i = 0; i < walls.length; i++) {
+        Wall wall = Wall(
+            position1: Vector2(walls[i].x, walls[i].y),
+            position2: Vector2(walls[i].x2, walls[i].y2),
+            background: background);
+        world.add(wall);
+      }
     };
+    for (var child in world.children) {
+      if (child is Wall) {
+        world.remove(child);
+      }
+    }
     reset.onTick = () {
       car.body.setTransform(Vector2(-150, 240), pi);
     };
     car.step = -1;
+    timer.pause();
     countdown.reset();
     countdown.start();
     reset.start();
