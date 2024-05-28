@@ -8,14 +8,14 @@ import 'package:flame/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart' hide Timer;
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
 import 'package:flutter/services.dart';
-import 'package:jumpjump/data.dart';
-import 'package:jumpjump/game/background.dart';
-import 'package:jumpjump/game/car.dart';
-import 'package:jumpjump/game/collision/line.dart';
-import 'package:jumpjump/game/collision/wall.dart';
-import 'package:jumpjump/game/control/drcontrol.dart';
-import 'package:jumpjump/game/control/reset.dart';
-import 'package:jumpjump/game/control/steering_wheel.dart';
+import 'package:drag_racing/data.dart';
+import 'package:drag_racing/game/background.dart';
+import 'package:drag_racing/game/car.dart';
+import 'package:drag_racing/game/collision/line.dart';
+import 'package:drag_racing/game/collision/wall.dart';
+import 'package:drag_racing/game/control/drcontrol.dart';
+import 'package:drag_racing/game/control/reset.dart';
+import 'package:drag_racing/game/control/steering_wheel.dart';
 
 class MyGame extends Forge2DGame with KeyboardEvents {
   MyGame() : super(gravity: Vector2(0, 0));

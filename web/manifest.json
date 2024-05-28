@@ -1,6 +1,6 @@
 {
-    "name": "jumpjump",
-    "short_name": "jumpjump",
+    "name": "drag_racing",
+    "short_name": "drag_racing",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#hexcode",

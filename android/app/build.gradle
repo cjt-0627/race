@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.example.jumpjump"
+    namespace "com.example.drag_racing"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 

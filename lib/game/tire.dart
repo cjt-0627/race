@@ -1,6 +1,6 @@
 import 'package:flame_forge2d/flame_forge2d.dart' hide Particle, World;
 import 'package:flutter/material.dart' hide Image, Gradient;
-import 'package:jumpjump/game/car.dart';
+import 'package:drag_racing/game/car.dart';
 
 class Tire extends BodyComponent {
   Tire({

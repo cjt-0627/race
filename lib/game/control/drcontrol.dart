@@ -2,7 +2,7 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
-import 'package:jumpjump/game/car.dart';
+import 'package:drag_racing/game/car.dart';
 
 class DRControl extends PositionComponent with DragCallbacks {
   double f = 0;

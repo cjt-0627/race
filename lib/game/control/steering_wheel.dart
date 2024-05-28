@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:jumpjump/game/car.dart';
+import 'package:drag_racing/game/car.dart';
 
 class SteeringWheelIcon extends SpriteComponent {
   SteeringWheelIcon() : super(size: Vector2(180, 180), anchor: Anchor.center);

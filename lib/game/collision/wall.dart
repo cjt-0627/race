@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flame_forge2d/flame_forge2d.dart';
 
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
-import 'package:jumpjump/game/background.dart';
+import 'package:drag_racing/game/background.dart';
 
 // class Wall2 extends PositionComponent {
 //   late ShapeHitbox hitbox;

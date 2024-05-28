@@ -3,12 +3,12 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
-import 'package:flame_forge2d/flame_forge2d.dart' hide Particle, World,Timer;
+import 'package:flame_forge2d/flame_forge2d.dart' hide Particle, World, Timer;
 import 'package:flutter/material.dart' hide Image, Gradient;
-import 'package:jumpjump/game/tire.dart';
+import 'package:drag_racing/game/tire.dart';
 
 class Car extends BodyComponent {
-  Car(this.sprite, this.startPosition,this.timer)
+  Car(this.sprite, this.startPosition, this.timer)
       : super(
           priority: 3,
           paint: Paint()..color = Colors.transparent,
@@ -26,7 +26,7 @@ class Car extends BodyComponent {
   double drvalue = 0.0;
   double stvalue = 0.0;
   Timer timer;
-  int step=-1;
+  int step = -1;
 
   final vertices = <Vector2>[
     Vector2(1.5, -5.0),
@@ -78,7 +78,7 @@ class Car extends BodyComponent {
     final def = BodyDef()
       ..type = BodyType.dynamic
       ..position = startPosition
-      ..angle = pi ;
+      ..angle = pi;
     final body = world.createBody(def)
       ..userData = this
       ..angularDamping = 3.0;

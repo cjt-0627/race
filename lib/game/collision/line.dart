@@ -3,8 +3,8 @@ import 'package:flame/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
-import 'package:jumpjump/game/background.dart';
-import 'package:jumpjump/game/car.dart';
+import 'package:drag_racing/game/background.dart';
+import 'package:drag_racing/game/car.dart';
 
 // class Line2 extends BodyComponent{
 //   late ShapeHitbox hitbox;
