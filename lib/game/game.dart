@@ -106,8 +106,7 @@ class MyGame extends Forge2DGame with KeyboardEvents {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    await getBestScore();
-    print(bestScore);
+    getBestScore();
     router = RouterComponent(
       routes: {
         'game-over': OverlayRoute(

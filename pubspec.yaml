@@ -1,7 +1,7 @@
 name: drag_racing
 description: "A new Flutter project."
 publish_to: 'none'
-version: 1.1.0+6
+version: 1.1.1+7
 
 environment:
   sdk: '>=3.2.5 <4.0.0'
