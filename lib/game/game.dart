@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:drag_racing/main.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 
@@ -26,6 +27,7 @@ class MyGame extends Forge2DGame with KeyboardEvents {
   late DRControl drControl;
   late ResetButton resetButton;
   bool init = false;
+  int? bestScore;
 
   final timer = Timer(double.infinity, autoStart: false);
   final countdown = Timer(3, autoStart: false);
@@ -37,6 +39,20 @@ class MyGame extends Forge2DGame with KeyboardEvents {
     Vector2(768, 932),
     Vector2(624, 1051)
   ];
+
+  Future<void> getBestScore() async {
+    try {
+      final data = await supabase
+          .from('scores')
+          .select('score')
+          .order('score', ascending: true);
+      if (data.isNotEmpty) {
+        bestScore = data.first['score'];
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
 
   @override
   KeyEventResult onKeyEvent(event, Set<LogicalKeyboardKey> keysPressed) {
@@ -90,6 +106,8 @@ class MyGame extends Forge2DGame with KeyboardEvents {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    await getBestScore();
+    print(bestScore);
     router = RouterComponent(
       routes: {
         'game-over': OverlayRoute(
@@ -109,6 +127,12 @@ class MyGame extends Forge2DGame with KeyboardEvents {
                       style:
                           const TextStyle(fontSize: 40, fontFamily: 'Micro5'),
                     ),
+                    if (bestScore != null)
+                      Text(
+                        'Global Best Record: $bestScore',
+                        style:
+                            const TextStyle(fontSize: 40, fontFamily: 'Micro5'),
+                      ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: SizedBox(
@@ -153,6 +177,12 @@ class MyGame extends Forge2DGame with KeyboardEvents {
                     'A racing game made with FlameGame.',
                     style: TextStyle(fontSize: 40, fontFamily: 'Micro5'),
                   ),
+                  if (bestScore != null)
+                    Text(
+                      'Global Best Record: $bestScore',
+                      style:
+                          const TextStyle(fontSize: 40, fontFamily: 'Micro5'),
+                    ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: SizedBox(
@@ -197,7 +227,8 @@ class MyGame extends Forge2DGame with KeyboardEvents {
           position2: (lines[i] + Vector2(60, 0)) * 4 / 4.3 + n,
           step: i,
           background: background,
-          router: router);
+          router: router,
+          myGame: this);
 
       world.add(line);
     }
@@ -291,7 +322,7 @@ class MyGame extends Forge2DGame with KeyboardEvents {
       );
       Vector2 v = car.body.linearVelocity;
       textPaintSpeed.render(
-          canvas, "${sqrt(v.dot(v)).round()}", Vector2(size.x / 2, size.y),
+          canvas, "${sqrt(v.dot(v)).floor()}", Vector2(size.x / 2, size.y),
           anchor: Anchor.bottomCenter);
       if (timer.isRunning()) {
         final TextPaint textPaint = TextPaint(

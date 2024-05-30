@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'package:drag_racing/game/game.dart';
 import 'package:flame/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
 import 'package:drag_racing/game/background.dart';
 import 'package:drag_racing/game/car.dart';
+
+import 'package:drag_racing/main.dart';
 
 // class Line2 extends BodyComponent{
 //   late ShapeHitbox hitbox;
@@ -29,13 +32,15 @@ class Line extends BodyComponent with ContactCallbacks {
   final Background background;
   int step;
   final RouterComponent router;
+  MyGame myGame;
   double num = 4.3;
   Line(
       {required this.position1,
       required this.position2,
       required this.background,
       required this.step,
-      required this.router});
+      required this.router,
+      required this.myGame});
   @override
   Body createBody() {
     final shape = EdgeShape()
@@ -63,6 +68,14 @@ class Line extends BodyComponent with ContactCallbacks {
       if (step == 2) {
         other.timer.pause();
         router.pushNamed('game-over');
+        myGame.getBestScore();
+        try {
+          supabase
+              .from('scores')
+              .insert({'score': other.timer.current.round()});
+        } catch (e) {
+          debugPrint(e.toString());
+        }
       }
     }
   }
