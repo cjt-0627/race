@@ -82,6 +82,7 @@ class MyGame extends Forge2DGame with KeyboardEvents {
         drControl.size.x / 2 + 50,
         size.y - drControl.size.y / 2 - 40,
       );
+      resetButton.position = Vector2(size.x - resetButton.size.x / 2 - 50, 80);
     }
     super.onGameResize(size);
   }
@@ -241,7 +242,6 @@ class MyGame extends Forge2DGame with KeyboardEvents {
         init = true;
       }
     } else {
-      camera.moveTo(car.body.position);
       camera.viewfinder.angle = car.body.angle + pi;
     }
     super.update(dt);
