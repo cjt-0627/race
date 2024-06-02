@@ -62,20 +62,16 @@ class Line extends BodyComponent with ContactCallbacks {
   }
 
   @override
-  void beginContact(Object other, Contact contact) {
+  Future<void> beginContact(Object other, Contact contact) async {
     if (other is Car && (other.step - step).abs() <= 1) {
       other.step = step;
       if (step == 2) {
         other.timer.pause();
         router.pushNamed('game-over');
-        myGame.getBestScore();
-        try {
-          supabase
-              .from('scores')
-              .insert({'score': other.timer.current.round()});
-        } catch (e) {
-          debugPrint(e.toString());
-        }
+        await myGame.getBestScore();
+        await supabase
+            .from('scores')
+            .insert({'score': other.timer.current.round()});
       }
     }
   }
